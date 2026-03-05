@@ -9,7 +9,6 @@
 #include "G4NistManager.hh"
 
 #include "G4Box.hh"
-#include "G4Tubs.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4AssemblyVolume.hh"
 #include "G4LogicalVolume.hh"
@@ -35,8 +34,11 @@
 #include <iostream>
 #include <tuple>
 
+#include "DetectorConstructionMessenger.hh"
+
 DetectorConstruction::DetectorConstruction() {
     G4cout << "### DetectorConstruction instantiated ###" << G4endl;
+    fMessenger = new DetectorConstructionMessenger(this);
 }
 
 G4VPhysicalVolume *DetectorConstruction::Construct() {
@@ -46,12 +48,14 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
     G4NistManager* nist = G4NistManager::Instance();
 
     G4Element* Argon = nist->FindOrBuildElement("Ar");
-    G4Element* Carbon = nist->FindOrBuildElement("C");
     G4Element* Oxygen = nist->FindOrBuildElement("O");
     G4Element* Bismuth = nist->FindOrBuildElement("Bi");
     G4Element* Silicon = nist->FindOrBuildElement("Si");
 
+
     G4Material* Copper = nist->FindOrBuildMaterial("G4_Cu");
+    G4Material* Steel = nist->FindOrBuildMaterial("G4-STAINLESS-STEEL");
+
     G4Material* CO2 = nist->FindOrBuildMaterial("G4_CARBON_DIOXIDE");
     G4Material* MMGas = new G4Material("MMGas", 1.80*mg/cm3, 2);
     MMGas->AddElement(Argon, 90*perCent);
@@ -65,9 +69,9 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
     BSO->AddElement(Oxygen, 12);
 
     G4Material* Air = nist->FindOrBuildMaterial("G4_AIR");
-
+    G4Material* Vacuum = nist->FindOrBuildMaterial("G4_Galactic");
     //Build the World Volume
-    G4Box* worldSolid = new G4Box("World", 2.*m, 2.*m, 4.*m);
+    G4Box* worldSolid = new G4Box("World", 1.*m, 1.*m, 2.*m);
 
     G4LogicalVolume* worldLogic = new G4LogicalVolume(worldSolid,
                                                       Air,
@@ -87,27 +91,43 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
 
     G4Box* micromegasSolid = new G4Box("MicroMegas", 5*cm, 5*cm, 0.5*cm);
 
-    G4LogicalVolume* micromegasLogic = new G4LogicalVolume(micromegasSolid, MMGas, "MicroMegas");
+    G4LogicalVolume* micromegasLogic1 = new G4LogicalVolume(micromegasSolid, MMGas, "MicroMegas1");
+    G4LogicalVolume* micromegasLogic2 = new G4LogicalVolume(micromegasSolid, MMGas, "MicroMegas2");
 
     G4VisAttributes* micromegasVis = new G4VisAttributes(G4Colour::Yellow());
     micromegasVis->SetForceSolid(true);
-    micromegasLogic->SetVisAttributes(micromegasVis);
+    micromegasLogic1->SetVisAttributes(micromegasVis);
+    micromegasLogic2->SetVisAttributes(micromegasVis);
 
-    auto micromegasPhysical0 = new G4PVPlacement(nullptr, G4ThreeVector(0., 0., 1*m), micromegasLogic, "MicroMegasPhys", worldLogic, false, 0, checkOverlaps);
-    auto micromegasPhysical1 = new G4PVPlacement(nullptr, G4ThreeVector(0., 0., 1.5*m), micromegasLogic, "MicroMegasPhys", worldLogic, false, 1, checkOverlaps);
+    auto micromegasPhysical1 = new G4PVPlacement(nullptr, G4ThreeVector(0., 0., fMM1Position), micromegasLogic1, "MicroMegas1Phys", worldLogic, false, 0, checkOverlaps);
+    auto micromegasPhysical2 = new G4PVPlacement(nullptr, G4ThreeVector(0., 0., fMM2Position), micromegasLogic2, "MicroMegas2Phys", worldLogic, false, 1, checkOverlaps);
 
     //Build Plastic Scintillators
 
     G4Box* plasticSolid = new G4Box("Plastic", 5*cm, 5*cm, 0.5*cm);
 
-    G4LogicalVolume* plasticLogic = new G4LogicalVolume(plasticSolid, Plastic, "Plastic");
+    G4LogicalVolume* plasticLogic1 = new G4LogicalVolume(plasticSolid, Plastic, "Plastic1");
+    G4LogicalVolume* plasticLogic2 = new G4LogicalVolume(plasticSolid, Plastic, "Plastic2");
 
     G4VisAttributes* plasticVis = new G4VisAttributes(G4Colour::White());
     plasticVis->SetForceSolid(true);
-    plasticLogic->SetVisAttributes(plasticVis);
+    plasticLogic1->SetVisAttributes(plasticVis);
+    plasticLogic2->SetVisAttributes(plasticVis);
 
-    auto plasticPhysical0 = new G4PVPlacement(nullptr, G4ThreeVector(0., 0., 90*cm), plasticLogic, "PlasticPhys", worldLogic, false, 0, checkOverlaps);
-    auto plasticPhysical1 = new G4PVPlacement(nullptr, G4ThreeVector(0., 0., 140*cm), plasticLogic, "PlasticPhys", worldLogic, false, 1, checkOverlaps);
+    auto plasticPhysical1 = new G4PVPlacement(nullptr, G4ThreeVector(0., 0., fPlastic1Position), plasticLogic1, "Plastic1Phys", worldLogic, false, 0, checkOverlaps);
+    auto plasticPhysical2 = new G4PVPlacement(nullptr, G4ThreeVector(0., 0., fPlastic2Position), plasticLogic2, "Plastic2Phys", worldLogic, false, 1, checkOverlaps);
+
+    //build box
+
+    G4Box* boxSolid = new G4Box("Box", 30*cm, 30*cm, 0.75*mm);
+
+    G4LogicalVolume* boxLogic = new G4LogicalVolume(boxSolid, Steel, "Box");
+
+    G4VisAttributes* boxVis = new G4VisAttributes(G4Colour::Grey());
+    boxVis->SetForceSolid(true);
+    boxLogic->SetVisAttributes(boxVis);
+
+    auto* boxPhysical = new G4PVPlacement(nullptr, G4ThreeVector(0., 0., fBoxPosition), boxLogic, "BoxPhys", worldLogic, false, 0, checkOverlaps);
 
     //Build Crystal Matrix
 
@@ -125,24 +145,24 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
     const G4double caloZ = frontZ + rearZ; // 20 cm
     
     auto* calorimeterSolid  = new G4Box("Calorimeter", caloX/2, caloY/2, caloZ/2);
-    auto* calorimeterLogical = new G4LogicalVolume(calorimeterSolid, BSO, "Calorimeter");
-    new G4PVPlacement(nullptr, G4ThreeVector(0,0,0), //bug fix
+    auto* calorimeterLogical = new G4LogicalVolume(calorimeterSolid, Vacuum, "Calorimeter");
+    new G4PVPlacement(nullptr, G4ThreeVector(0,0, fCalorimeterPosition),
         calorimeterLogical, "CalorimeterPhys", worldLogic, false, 0, checkOverlaps);
 
     //front and rear
     auto* frontSolid  = new G4Box("frontSolid", caloX/2, caloY/2, frontZ/2);
-    auto* frontLV = new G4LogicalVolume(frontSolid, BSO, "FrontLV");
+    auto* frontLV = new G4LogicalVolume(frontSolid, Vacuum, "FrontLV");
     new G4PVPlacement(nullptr,
-                      G4ThreeVector(0,0, -caloZ/2 + frontZ/2), //bug fix
+                      G4ThreeVector(0,0, -caloZ/2 + frontZ/2),
                       frontLV, "FrontPV", calorimeterLogical, false, 0, checkOverlaps);
     
     auto* rearSolid  = new G4Box("rearSolid", caloX/2, caloY/2, rearZ/2);
-    auto* rearLV = new G4LogicalVolume(rearSolid, BSO, "rearLV");
+    auto* rearLV = new G4LogicalVolume(rearSolid, Vacuum, "rearLV");
     new G4PVPlacement(nullptr,
-                  G4ThreeVector(0,0, +caloZ/2 - rearZ/2), //bug fix
+                  G4ThreeVector(0,0, +caloZ/2 - rearZ/2),
                   rearLV, "rearPV", calorimeterLogical, false, 0, checkOverlaps);
 
-    // --- Front matrix 3x3 ---
+    // --- front matrix 3x3 ---
     // 1) Slice in X dentro FrontLV
     auto* frontXsliceS  = new G4Box("FrontXsliceS", cellX/2, caloY/2, frontZ/2);
     auto* frontXsliceLV = new G4LogicalVolume(frontXsliceS, BSO, "FrontXsliceLV");
@@ -163,17 +183,20 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
     new G4PVReplica("rearCellPV", rearCellLV, rearXsliceLV, kYAxis, nY, cellY);
 
     // Virtual Detectors
-    G4Box* virtualDetectorSolid = new G4Box("VirtualDetector", 5*cm, 5*cm, 0.5*mm);
+    G4Box* virtualDetectorSolid = new G4Box("VirtualDetector", 5*cm, 5*cm, 0.25*mm);
 
-    G4LogicalVolume* virtualDetectorLogic0 = new G4LogicalVolume(virtualDetectorSolid, Air, "VirtualDetector0");
     G4LogicalVolume* virtualDetectorLogic1 = new G4LogicalVolume(virtualDetectorSolid, Air, "VirtualDetector1");
+    G4LogicalVolume* virtualDetectorLogic2 = new G4LogicalVolume(virtualDetectorSolid, Air, "VirtualDetector2");
+    G4LogicalVolume* virtualDetectorLogic3 = new G4LogicalVolume(virtualDetectorSolid, Air, "VirtualDetector3");
 
     G4VisAttributes* virtualDetectorVis = new G4VisAttributes(G4Colour::White());
-    virtualDetectorLogic0->SetVisAttributes(virtualDetectorVis);
     virtualDetectorLogic1->SetVisAttributes(virtualDetectorVis);
+    virtualDetectorLogic2->SetVisAttributes(virtualDetectorVis);
+    virtualDetectorLogic2->SetVisAttributes(virtualDetectorVis);
 
-    auto virtualDetecor0 = new G4PVPlacement(nullptr, G4ThreeVector(0., 0., 89*cm), virtualDetectorLogic0, "VirtualDetector0", worldLogic, false, 0, checkOverlaps);
-    auto virtualDetecor1 = new G4PVPlacement(nullptr, G4ThreeVector(0., 0., 139*cm), virtualDetectorLogic0, "VirtualDetector1", worldLogic, false, 1, checkOverlaps);
+    auto virtualDetector1 = new G4PVPlacement(nullptr, G4ThreeVector(0., 0., fVDet1Position), virtualDetectorLogic1, "VirtualDetector1", worldLogic, false, 0, checkOverlaps);
+    auto virtualDetector2 = new G4PVPlacement(nullptr, G4ThreeVector(0., 0., fVDet2Position), virtualDetectorLogic2, "VirtualDetector2", worldLogic, false, 1, checkOverlaps);
+    auto virtualDetector3 = new G4PVPlacement(nullptr, G4ThreeVector(0., 0., fVDet3Position), virtualDetectorLogic3, "VirtualDetector3", worldLogic, false, 2, checkOverlaps);
 
     return worldPhys;
 }
