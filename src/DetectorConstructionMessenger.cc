@@ -23,85 +23,92 @@ DetectorConstructionMessenger::DetectorConstructionMessenger(DetectorConstructio
 
     //position of station 1
     //micromegas 1
-    fMicroMegas1PositionCmd = new G4UIcmdWithADoubleAndUnit("/det/setMicroMegas1Position", this);
+    fMicroMegas1PositionCmd = new G4UIcmdWithADoubleAndUnit("/testbeam/setMicroMegas1Position", this);
     fMicroMegas1PositionCmd->SetGuidance("Set the position of the micro-megas 1");
     fMicroMegas1PositionCmd->SetParameterName("z position of MM1", true);
     fMicroMegas1PositionCmd->SetDefaultValue(0.0);
     fMicroMegas1PositionCmd->SetDefaultUnit("cm");
+    fMicroMegas1PositionCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
     //plastic 1
-    fPlastic1PositionCmd = new G4UIcmdWithADoubleAndUnit("/det/setPlastic1Position", this);
+    fPlastic1PositionCmd = new G4UIcmdWithADoubleAndUnit("/testbeam/setPlastic1Position", this);
     fPlastic1PositionCmd->SetGuidance("Set the position of the plastic scintillator 1");
     fPlastic1PositionCmd->SetParameterName("z position of Plastic 1", true);
     fPlastic1PositionCmd->SetDefaultValue(-1.5);
     fPlastic1PositionCmd->SetDefaultUnit("cm");
+    fPlastic1PositionCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
     //virtual detector 1
-    fVDet1PositionCmd = new G4UIcmdWithADoubleAndUnit("/det/setVirtualDetector1Position", this);
+    fVDet1PositionCmd = new G4UIcmdWithADoubleAndUnit("/testbeam/setVirtualDetector1Position", this);
     fVDet1PositionCmd->SetGuidance("Set the position of the virtual detector 1");
     fVDet1PositionCmd->SetParameterName("z position of VDet1", true);
     fVDet1PositionCmd->SetDefaultValue(-1.6);
     fVDet1PositionCmd->SetDefaultUnit("cm");
-
+    fVDet1PositionCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
     //position of station 2
     //micromegas 2
-    fMicroMegas2PositionCmd = new G4UIcmdWithADoubleAndUnit("/det/setMicroMegas2Position", this);
+    fMicroMegas2PositionCmd = new G4UIcmdWithADoubleAndUnit("/testbeam/setMicroMegas2Position", this);
     fMicroMegas2PositionCmd->SetGuidance("Set the position of the micro-megas 2");
     fMicroMegas2PositionCmd->SetParameterName("z position of MM2", true);
     fMicroMegas2PositionCmd->SetDefaultValue(30.0);
     fMicroMegas2PositionCmd->SetDefaultUnit("cm");
+    fMicroMegas2PositionCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
     //plastic 2
-    fPlastic2PositionCmd = new G4UIcmdWithADoubleAndUnit("/det/setPlastic2Position", this);
+    fPlastic2PositionCmd = new G4UIcmdWithADoubleAndUnit("/testbeam/setPlastic2Position", this);
     fPlastic2PositionCmd->SetGuidance("Set the position of the plastic scintillator 2");
     fPlastic2PositionCmd->SetParameterName("z position of Plastic 0", true);
     fPlastic2PositionCmd->SetDefaultValue(28.5);
     fPlastic2PositionCmd->SetDefaultUnit("cm");
+    fPlastic2PositionCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
     //virtual detector 2
-    fVDet2PositionCmd = new G4UIcmdWithADoubleAndUnit("/det/setVirtualDetector2Position", this);
+    fVDet2PositionCmd = new G4UIcmdWithADoubleAndUnit("/testbeam/setVirtualDetector2Position", this);
     fVDet2PositionCmd->SetGuidance("Set the position of the virtual detector 2");
     fVDet2PositionCmd->SetParameterName("z position of VDet2", true);
     fVDet2PositionCmd->SetDefaultValue(28.4);
     fVDet2PositionCmd->SetDefaultUnit("cm");
-
+    fVDet2PositionCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
     //Position of box, calo, last vdet
     //box
-    fBoxPositionCmd = new G4UIcmdWithADoubleAndUnit("/det/setBoxPosition", this);
+    fBoxPositionCmd = new G4UIcmdWithADoubleAndUnit("/testbeam/setBoxPosition", this);
     fBoxPositionCmd->SetGuidance("Set the position of the box");
     fBoxPositionCmd->SetParameterName("z position of Box", true);
     fBoxPositionCmd->SetDefaultValue(60.0);
     fBoxPositionCmd->SetDefaultUnit("cm");
+    fBoxPositionCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
     //virtual detector 3
-    fVDet3PositionCmd = new G4UIcmdWithADoubleAndUnit("/det/setVirtualDetector3Position", this);
+    fVDet3PositionCmd = new G4UIcmdWithADoubleAndUnit("/testbeam/setVirtualDetector3Position", this);
     fVDet3PositionCmd->SetGuidance("Set the position of the virtual detector 3");
     fVDet3PositionCmd->SetParameterName("z position of VDet3", true);
     fVDet3PositionCmd->SetDefaultValue(89.9);
     fVDet3PositionCmd->SetDefaultUnit("cm");
+    fVDet3PositionCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
     //calorimeter
-    fCalorimeterPositionCmd = new G4UIcmdWithADoubleAndUnit("/det/setCalorimeterPosition", this);
+    fCalorimeterPositionCmd = new G4UIcmdWithADoubleAndUnit("/testbeam/setCalorimeterPosition", this);
     fCalorimeterPositionCmd->SetGuidance("Set the position of the calorimeter");
     fCalorimeterPositionCmd->SetParameterName("z position of Calorimeter", true);
     fCalorimeterPositionCmd->SetDefaultValue(90.0);
     fCalorimeterPositionCmd->SetDefaultUnit("cm");
-
+    fCalorimeterPositionCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
     //rotation of station 1
-    fStation1AngleXCmd = new G4UIcmdWithADouble("/det/setStation1AngleX", this);
+    fStation1AngleXCmd = new G4UIcmdWithADouble("/testbeam/setStation1AngleX", this);
     fStation1AngleXCmd->SetGuidance("Rotate the station 1 around the X axis");
     fStation1AngleXCmd->SetParameterName("angle X", true);
     fStation1AngleXCmd->SetDefaultValue(0.0);
-
-    fStation1AngleYCmd = new G4UIcmdWithADouble("/det/setStation1AngleY", this);
+    fStation1AngleXCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+    fStation1AngleYCmd = new G4UIcmdWithADouble("/testbeam/setStation1AngleY", this);
     fStation1AngleYCmd->SetGuidance("Rotate the station 1 around the Y axis");
     fStation1AngleYCmd->SetParameterName("angle Y", true);
     fStation1AngleYCmd->SetDefaultValue(0.0);
-
+    fStation1AngleYCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
     //rotation of station 2
-    fStation2AngleXCmd = new G4UIcmdWithADouble("/det/setStation2AngleX", this);
+    fStation2AngleXCmd = new G4UIcmdWithADouble("/testbeam/setStation2AngleX", this);
     fStation2AngleXCmd->SetGuidance("Rotate the station 2 around the X axis");
     fStation2AngleXCmd->SetParameterName("angle X", true);
     fStation2AngleXCmd->SetDefaultValue(0.0);
-
-    fStation2AngleYCmd = new G4UIcmdWithADouble("/det/setStation2AngleY", this);
+    fStation2AngleXCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+    fStation2AngleYCmd = new G4UIcmdWithADouble("/testbeam/setStation2AngleY", this);
     fStation2AngleYCmd->SetGuidance("Rotate the station 2 around the Y axis");
     fStation2AngleYCmd->SetParameterName("angle Y", true);
     fStation2AngleYCmd->SetDefaultValue(0.0);
+    fStation2AngleYCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 }
 
 DetectorConstructionMessenger::~DetectorConstructionMessenger() {

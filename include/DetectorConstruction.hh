@@ -39,15 +39,19 @@ public:
 private:
     DetectorConstructionMessenger* fMessenger{nullptr};
 
+    G4LogicalVolume* virtualDetectorLogic1{nullptr};
+    G4LogicalVolume* virtualDetectorLogic2{nullptr};
+    G4LogicalVolume* virtualDetectorLogic3{nullptr};
+
     G4double fMM1Position = 0.0*cm;
     G4double fPlastic1Position = -1.5*cm;
-    G4double fVDet1Position = -0.1*cm;
+    G4double fVDet1Position = -0.6*cm;
     G4double fMM2Position = 30.0*cm;
     G4double fPlastic2Position = 28.5*cm;
-    G4double fVDet2Position = 29.9*cm;
+    G4double fVDet2Position = 29.4*cm;
     G4double fBoxPosition = 60.0*cm;
     G4double fCalorimeterPosition = 90.0*cm;
-    G4double fVDet3Position = 89.9*cm;
+    G4double fVDet3Position = 79.9*cm;
 
     G4double fStation1AngleX = 0;
     G4double fStation1AngleY = 0;

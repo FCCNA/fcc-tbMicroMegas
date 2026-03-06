@@ -10,6 +10,7 @@
 
 #include "G4Box.hh"
 #include "G4SubtractionSolid.hh"
+#include "G4RotationMatrix.hh"
 #include "G4AssemblyVolume.hh"
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
@@ -35,6 +36,7 @@
 #include <tuple>
 
 #include "DetectorConstructionMessenger.hh"
+#include "VirtualDetectorSD.hh"
 
 DetectorConstruction::DetectorConstruction() {
     G4cout << "### DetectorConstruction instantiated ###" << G4endl;
@@ -53,9 +55,12 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
     G4Element* Silicon = nist->FindOrBuildElement("Si");
 
 
-    G4Material* Copper = nist->FindOrBuildMaterial("G4_Cu");
-    G4Material* Steel = nist->FindOrBuildMaterial("G4-STAINLESS-STEEL");
+    G4Material* Steel = nist->FindOrBuildMaterial("G4_STAINLESS-STEEL");
 
+    // Micromegas materials
+    G4Material* Copper = nist->FindOrBuildMaterial("G4_Cu");
+    G4Material* Kapton = nist->FindOrBuildMaterial("G4_KAPTON");
+    G4Material* Glass = nist->FindOrBuildMaterial("G4_GLASS_PLATE");
     G4Material* CO2 = nist->FindOrBuildMaterial("G4_CARBON_DIOXIDE");
     G4Material* MMGas = new G4Material("MMGas", 1.80*mg/cm3, 2);
     MMGas->AddElement(Argon, 90*perCent);
@@ -87,20 +92,81 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
                                    0,               // copy number
                                    checkOverlaps);  // overlaps checking
 
+    //Rotation matrices
+    G4RotationMatrix* station1Rotation = new G4RotationMatrix;
+    station1Rotation->rotateX(fStation1AngleX);
+    station1Rotation->rotateY(fStation1AngleY);
+    G4RotationMatrix* station2Rotation = new G4RotationMatrix;
+    station2Rotation->rotateX(fStation2AngleX);
+    station2Rotation->rotateY(fStation2AngleY);
+
     //Build MicroMegas
+    //micromegas transverse size
+    const G4double mmX = 10.*cm;
+    const G4double mmY = 10.*cm;
+    //Layer thickness
+    const G4double tKapton1 = 120.*um;
+    const G4double tCopper1 = 13.*um;
+    const G4double tGas     = 5.0*mm;
+    const G4double tKapton2 = 60.*um;
+    const G4double tCopper2 = 13.*um;
+    const G4double tGlass   = 1.6*mm;
+    const G4double tCopper3 = 13.*um;
+    //total thickness
+    const G4double mmZ = tKapton1 + tCopper1 + tGas + tKapton2 + tCopper2 + tGlass + tCopper3;
+    G4Box* micromegasSolid = new G4Box("MicroMegas", mmX/2, mmY/2, mmZ/2);
 
-    G4Box* micromegasSolid = new G4Box("MicroMegas", 5*cm, 5*cm, 0.5*cm);
 
-    G4LogicalVolume* micromegasLogic1 = new G4LogicalVolume(micromegasSolid, MMGas, "MicroMegas1");
-    G4LogicalVolume* micromegasLogic2 = new G4LogicalVolume(micromegasSolid, MMGas, "MicroMegas2");
+    G4LogicalVolume* micromegasLogic1 = new G4LogicalVolume(micromegasSolid, Vacuum, "MicroMegas1");
+    G4LogicalVolume* micromegasLogic2 = new G4LogicalVolume(micromegasSolid,Vacuum, "MicroMegas2");
 
     G4VisAttributes* micromegasVis = new G4VisAttributes(G4Colour::Yellow());
-    micromegasVis->SetForceSolid(true);
+    micromegasVis->SetForceWireframe(true);
     micromegasLogic1->SetVisAttributes(micromegasVis);
     micromegasLogic2->SetVisAttributes(micromegasVis);
 
-    auto micromegasPhysical1 = new G4PVPlacement(nullptr, G4ThreeVector(0., 0., fMM1Position), micromegasLogic1, "MicroMegas1Phys", worldLogic, false, 0, checkOverlaps);
-    auto micromegasPhysical2 = new G4PVPlacement(nullptr, G4ThreeVector(0., 0., fMM2Position), micromegasLogic2, "MicroMegas2Phys", worldLogic, false, 1, checkOverlaps);
+    //Helper to build layers inside a Micromegas envelope
+    auto buildMicromegasLayers = [&](G4LogicalVolume* motherLV, const G4String& prefix)
+    {
+        G4double zCursor = -mmZ/2.;
+        auto placeLayer = [&](const G4String& name, G4Material* mat, G4double thickness, const G4Colour& color)
+        {
+            auto* solid = new G4Box(name + "S", mmX, mmY, thickness/2.);
+            auto* logic = new G4LogicalVolume(solid, mat, name + "LV");
+
+            auto* vis = new G4VisAttributes(color);
+            vis->SetForceSolid(true);
+            logic->SetVisAttributes(vis);
+
+            const G4double zCenter = zCursor + thickness/2.;
+
+            new G4PVPlacement(nullptr,
+                              G4ThreeVector(0., 0., zCenter),
+                              logic,
+                              name + "PV",
+                              motherLV,
+                              false,
+                              0,
+                              checkOverlaps);
+
+            zCursor += thickness;
+        };
+
+        placeLayer(prefix + "_Kapton1", Kapton, tKapton1, G4Colour(1.0, 0.5, 0.0));
+        placeLayer(prefix + "_Copper1", Copper, tCopper1, G4Colour::Brown());
+        placeLayer(prefix + "_Gas",     MMGas,  tGas,     G4Colour::Cyan());
+        placeLayer(prefix + "_Kapton2", Kapton, tKapton2, G4Colour(1.0, 0.5, 0.0));
+        placeLayer(prefix + "_Copper2", Copper, tCopper2, G4Colour::Brown());
+        placeLayer(prefix + "_Glass",   Glass,  tGlass,   G4Colour::Grey());
+        placeLayer(prefix + "_Copper3", Copper, tCopper3, G4Colour::Brown());
+    };
+
+    //Build internal layers in the two detectors
+    buildMicromegasLayers(micromegasLogic1, "MM1");
+    buildMicromegasLayers(micromegasLogic2, "MM2");
+
+    auto micromegasPhysical1 = new G4PVPlacement(station1Rotation, G4ThreeVector(0., 0., fMM1Position), micromegasLogic1, "MicroMegas1Phys", worldLogic, false, 0, checkOverlaps);
+    auto micromegasPhysical2 = new G4PVPlacement(station2Rotation, G4ThreeVector(0., 0., fMM2Position), micromegasLogic2, "MicroMegas2Phys", worldLogic, false, 1, checkOverlaps);
 
     //Build Plastic Scintillators
 
@@ -114,12 +180,12 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
     plasticLogic1->SetVisAttributes(plasticVis);
     plasticLogic2->SetVisAttributes(plasticVis);
 
-    auto plasticPhysical1 = new G4PVPlacement(nullptr, G4ThreeVector(0., 0., fPlastic1Position), plasticLogic1, "Plastic1Phys", worldLogic, false, 0, checkOverlaps);
-    auto plasticPhysical2 = new G4PVPlacement(nullptr, G4ThreeVector(0., 0., fPlastic2Position), plasticLogic2, "Plastic2Phys", worldLogic, false, 1, checkOverlaps);
+    auto plasticPhysical1 = new G4PVPlacement(station1Rotation, G4ThreeVector(0., 0., fPlastic1Position), plasticLogic1, "Plastic1Phys", worldLogic, false, 0, checkOverlaps);
+    auto plasticPhysical2 = new G4PVPlacement(station2Rotation, G4ThreeVector(0., 0., fPlastic2Position), plasticLogic2, "Plastic2Phys", worldLogic, false, 1, checkOverlaps);
 
     //build box
 
-    G4Box* boxSolid = new G4Box("Box", 30*cm, 30*cm, 0.75*mm);
+    G4Box* boxSolid = new G4Box("Box", 15*cm, 15*cm, 0.75*mm);
 
     G4LogicalVolume* boxLogic = new G4LogicalVolume(boxSolid, Steel, "Box");
 
@@ -185,22 +251,26 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
     // Virtual Detectors
     G4Box* virtualDetectorSolid = new G4Box("VirtualDetector", 5*cm, 5*cm, 0.25*mm);
 
-    G4LogicalVolume* virtualDetectorLogic1 = new G4LogicalVolume(virtualDetectorSolid, Air, "VirtualDetector1");
-    G4LogicalVolume* virtualDetectorLogic2 = new G4LogicalVolume(virtualDetectorSolid, Air, "VirtualDetector2");
-    G4LogicalVolume* virtualDetectorLogic3 = new G4LogicalVolume(virtualDetectorSolid, Air, "VirtualDetector3");
+    virtualDetectorLogic1 = new G4LogicalVolume(virtualDetectorSolid, Air, "VirtualDetector1");
+    virtualDetectorLogic2 = new G4LogicalVolume(virtualDetectorSolid, Air, "VirtualDetector2");
+    virtualDetectorLogic3 = new G4LogicalVolume(virtualDetectorSolid, Air, "VirtualDetector3");
 
     G4VisAttributes* virtualDetectorVis = new G4VisAttributes(G4Colour::White());
     virtualDetectorLogic1->SetVisAttributes(virtualDetectorVis);
     virtualDetectorLogic2->SetVisAttributes(virtualDetectorVis);
     virtualDetectorLogic2->SetVisAttributes(virtualDetectorVis);
 
-    auto virtualDetector1 = new G4PVPlacement(nullptr, G4ThreeVector(0., 0., fVDet1Position), virtualDetectorLogic1, "VirtualDetector1", worldLogic, false, 0, checkOverlaps);
-    auto virtualDetector2 = new G4PVPlacement(nullptr, G4ThreeVector(0., 0., fVDet2Position), virtualDetectorLogic2, "VirtualDetector2", worldLogic, false, 1, checkOverlaps);
+    auto virtualDetector1 = new G4PVPlacement(station1Rotation, G4ThreeVector(0., 0., fVDet1Position), virtualDetectorLogic1, "VirtualDetector1", worldLogic, false, 0, checkOverlaps);
+    auto virtualDetector2 = new G4PVPlacement(station2Rotation, G4ThreeVector(0., 0., fVDet2Position), virtualDetectorLogic2, "VirtualDetector2", worldLogic, false, 1, checkOverlaps);
     auto virtualDetector3 = new G4PVPlacement(nullptr, G4ThreeVector(0., 0., fVDet3Position), virtualDetectorLogic3, "VirtualDetector3", worldLogic, false, 2, checkOverlaps);
 
     return worldPhys;
 }
 
 void DetectorConstruction::ConstructSDandField() {
-
+    auto* virtualDetector = new VirtualDetector("Screen");
+    G4SDManager::GetSDMpointer()->AddNewDetector(virtualDetector);
+    virtualDetectorLogic1->SetSensitiveDetector(virtualDetector);
+    virtualDetectorLogic2->SetSensitiveDetector(virtualDetector);
+    virtualDetectorLogic3->SetSensitiveDetector(virtualDetector);
 }

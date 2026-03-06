@@ -1,0 +1,5 @@
+/control/execute macros/beam.mac
+/run/initialize
+/random/setSeeds 347614 458825
+
+/run/beamOn 1000

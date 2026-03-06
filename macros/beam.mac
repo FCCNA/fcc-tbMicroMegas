@@ -1,0 +1,26 @@
+# ============================
+# beam.mac  (GPS configuration)
+# ============================
+
+# Proton Synchrotron provides positrons
+/gps/particle e+
+
+# Position/distribution
+/gps/pos/type Beam
+/gps/pos/shape Circle
+#/gps/pos/radius 1.0 cm #<-set hard cutoff for position
+/gps/pos/centre 0.0 0.0 -50.0 cm
+/gps/direction 0 0 1
+
+/gps/pos/sigma_x 0.25 cm
+/gps/pos/sigma_y 0.25 cm
+
+#/gps/ang/type beam2d
+#gps/ang/sigma_r 1 mrad
+
+# Energy: mono
+/gps/ene/type Mono
+/gps/ene/mono 5 GeV   # <-- change as needed
+
+# Number of primary particles per event
+/gps/number 1
