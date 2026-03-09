@@ -4,7 +4,6 @@
 
 #include "VirtualDetectorSD.hh"
 #include "VirtualDetectorHit.hh"
-#include "DetectorConstruction.hh"
 
 #include "G4HCofThisEvent.hh"
 #include "G4TouchableHistory.hh"
@@ -13,7 +12,7 @@
 #include "G4Track.hh"
 
 VirtualDetector::VirtualDetector(G4String name) : G4VSensitiveDetector(name) {
-    collectionName.insert("VDetCollection");
+    collectionName.insert("VirtualDetectorHC");
 }
 
 VirtualDetector::~VirtualDetector() {}

@@ -2,7 +2,7 @@
 # beam.mac  (GPS configuration)
 # ============================
 
-# Proton Synchrotron provides positrons
+# PS provides positrons
 /gps/particle e+
 
 # Position/distribution
@@ -20,7 +20,7 @@
 
 # Energy: mono
 /gps/ene/type Mono
-/gps/ene/mono 5 GeV   # <-- change as needed
+/gps/ene/mono 1 GeV   # <-- change as needed
 
 # Number of primary particles per event
 /gps/number 1

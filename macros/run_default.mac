@@ -1,5 +1,8 @@
-/control/execute macros/beam.mac
+/control/macroPath macros
 /run/initialize
 /random/setSeeds 347614 458825
+/control/execute beam.mac
 
-/run/beamOn 1000
+/gps/ene/mono 1 GeV
+
+/run/beamOn 10000

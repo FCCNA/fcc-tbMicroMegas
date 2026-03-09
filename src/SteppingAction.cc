@@ -60,7 +60,9 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
         {
             fEventAction->AddEdepPlastic2(edep);
         }
-
+        else if(volName == "BoxPhys") {
+            fEventAction->AddEdepBox(edep);
+        }
         // ---- Calorimeter (any cell)
         else if(volName.contains("CellPV"))
         {

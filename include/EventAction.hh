@@ -23,17 +23,19 @@ public:
     void AddEdepPlastic1(G4double e) { fEdepPlastic1 += e; }
     void AddEdepPlastic2(G4double e) { fEdepPlastic2 += e; }
 
+    void AddEdepBox(G4double e) { fEdepBox += e; }
     void AddEdepCalo(G4double e)     { fEdepCalo += e; }
 
 private:
-
     G4double fEdepMM1 = 0.;
     G4double fEdepMM2 = 0.;
-
     G4double fEdepPlastic1 = 0.;
     G4double fEdepPlastic2 = 0.;
-
+    G4double fEdepBox = 0.;
+    G4double fEdepPreCalo = 0.;
     G4double fEdepCalo = 0.;
+
+
 };
 
 #endif //TBMICROMEGAS_EVENTACTION_HH

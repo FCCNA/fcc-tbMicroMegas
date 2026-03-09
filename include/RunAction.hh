@@ -9,7 +9,7 @@
 #include "G4UserRunAction.hh"
 #include "globals.hh"
 
-//#include "EventAction.hh"
+#include "EventAction.hh"
 #include "G4SystemOfUnits.hh"
 
 class G4Run;

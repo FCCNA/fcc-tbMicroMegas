@@ -131,7 +131,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
         G4double zCursor = -mmZ/2.;
         auto placeLayer = [&](const G4String& name, G4Material* mat, G4double thickness, const G4Colour& color)
         {
-            auto* solid = new G4Box(name + "S", mmX, mmY, thickness/2.);
+            auto* solid = new G4Box(name + "S", mmX/2, mmY/2, thickness/2.);
             auto* logic = new G4LogicalVolume(solid, mat, name + "LV");
 
             auto* vis = new G4VisAttributes(color);
@@ -249,7 +249,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
     new G4PVReplica("rearCellPV", rearCellLV, rearXsliceLV, kYAxis, nY, cellY);
 
     // Virtual Detectors
-    G4Box* virtualDetectorSolid = new G4Box("VirtualDetector", 5*cm, 5*cm, 0.25*mm);
+    G4Box* virtualDetectorSolid = new G4Box("VirtualDetector", 10*cm, 10*cm, 0.25*mm);
 
     virtualDetectorLogic1 = new G4LogicalVolume(virtualDetectorSolid, Air, "VirtualDetector1");
     virtualDetectorLogic2 = new G4LogicalVolume(virtualDetectorSolid, Air, "VirtualDetector2");
@@ -268,7 +268,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
 }
 
 void DetectorConstruction::ConstructSDandField() {
-    auto* virtualDetector = new VirtualDetector("Screen");
+    auto* virtualDetector = new VirtualDetector("VirtualDetector");
     G4SDManager::GetSDMpointer()->AddNewDetector(virtualDetector);
     virtualDetectorLogic1->SetSensitiveDetector(virtualDetector);
     virtualDetectorLogic2->SetSensitiveDetector(virtualDetector);
