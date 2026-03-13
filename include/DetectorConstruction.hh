@@ -51,7 +51,7 @@ private:
     G4double fVDet2Position = 29.4*cm;
     G4double fBoxPosition = 60.0*cm;
     G4double fCalorimeterPosition = 90.0*cm;
-    G4double fVDet3Position = 79.9*cm;
+    G4double fVDet3Position = 78.9*cm;
 
     G4double fStation1AngleX = 0;
     G4double fStation1AngleY = 0;

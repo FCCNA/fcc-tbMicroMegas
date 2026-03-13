@@ -11,6 +11,7 @@
 
 #include "EventAction.hh"
 #include "G4SystemOfUnits.hh"
+#include "RunActionMessenger.hh"
 
 class G4Run;
 class G4GenericMessenger;
@@ -23,6 +24,11 @@ public:
     ~RunAction() override = default;
     void BeginOfRunAction(const G4Run*);
     void EndOfRunAction(const G4Run*);
+    void SetFileName(const G4String&);
+
+private:
+    G4String fFileName = "output";
+    RunActionMessenger* fMessenger{nullptr};
 };
 
 

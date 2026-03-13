@@ -1,0 +1,49 @@
+/gps/source/set 0
+/gps/particle e+
+/gps/source/intensity 0.4
+/gps/pos/sigma_x 1.4 cm
+/gps/pos/sigma_y 0.9 cm
+/gps/direction 0 0 1
+/gps/ene/type Gauss
+/gps/ene/mono 2.0 GeV
+/gps/ene/sigma 0.014 GeV
+
+/gps/source/set 1
+/gps/particle pi+
+/gps/source/intensity 0.4
+/gps/pos/sigma_x 1.4 cm
+/gps/pos/sigma_y 0.9 cm
+/gps/direction 0 0 1
+/gps/ene/type Gauss
+/gps/ene/mono 2.0 GeV
+/gps/ene/sigma 0.014 GeV
+
+/gps/source/set 2
+/gps/particle proton
+/gps/source/intensity 0.26
+/gps/pos/sigma_x 1.4 cm
+/gps/pos/sigma_y 0.9 cm
+/gps/direction 0 0 1
+/gps/ene/type Gauss
+/gps/ene/mono 2.0 GeV
+/gps/ene/sigma 0.014 GeV
+
+/gps/source/set 3
+/gps/particle mu+
+/gps/source/intensity 0.02
+/gps/pos/sigma_x 1.4 cm
+/gps/pos/sigma_y 0.9 cm
+/gps/direction 0 0 1
+/gps/ene/type Gauss
+/gps/ene/mono 2.0 GeV
+/gps/ene/sigma 0.014 GeV
+
+/gps/source/set 4
+/gps/particle kaon+
+/gps/source/intensity 0.01
+/gps/pos/sigma_x 1.4 cm
+/gps/pos/sigma_y 0.9 cm
+/gps/direction 0 0 1
+/gps/ene/type Gauss
+/gps/ene/mono 2.0 GeV
+/gps/ene/sigma 0.014 GeV

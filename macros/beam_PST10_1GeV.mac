@@ -1,0 +1,58 @@
+# ======================================
+# beam_PST10_1GeV.mac
+# ======================================
+
+# Source 0
+/gps/source/set 0
+/gps/particle e+
+/gps/source/intensity 0.8
+/gps/pos/sigma_x 2.8 cm
+/gps/pos/sigma_y 1.6 cm
+/gps/direction 0 0 1
+/gps/ene/type Gauss
+/gps/ene/mono 1.0 GeV
+/gps/ene/sigma 0.007 GeV
+
+
+# Source 1
+/gps/source/set 1
+/gps/particle pi+
+/gps/source/intensity 0.06
+/gps/pos/sigma_x 2.8 cm
+/gps/pos/sigma_y 1.6 cm
+/gps/direction 0 0 1
+/gps/ene/type Gauss
+/gps/ene/mono 1.0 GeV
+/gps/ene/sigma 0.007 GeV
+
+# Source 2
+/gps/source/set 2
+/gps/particle proton
+/gps/source/intensity 0.02
+/gps/pos/sigma_x 2.8 cm
+/gps/pos/sigma_y 1.6 cm
+/gps/direction 0 0 1
+/gps/ene/type Gauss
+/gps/ene/mono 1.0 GeV
+/gps/ene/sigma 0.007 GeV
+
+# disable unused sources
+/gps/source/set 3
+/gps/particle mu+
+/gps/source/intensity 0.01
+/gps/pos/sigma_x 2.8 cm
+/gps/pos/sigma_y 1.6 cm
+/gps/direction 0 0 1
+/gps/ene/type Gauss
+/gps/ene/mono 1.0 GeV
+/gps/ene/sigma 0.007 GeV
+
+/gps/source/set 4
+/gps/particle kaon+
+/gps/source/intensity 0.01
+/gps/pos/sigma_x 2.8 cm
+/gps/pos/sigma_y 1.6 cm
+/gps/direction 0 0 1
+/gps/ene/type Gauss
+/gps/ene/mono 1.0 GeV
+/gps/ene/sigma 0.007 GeV

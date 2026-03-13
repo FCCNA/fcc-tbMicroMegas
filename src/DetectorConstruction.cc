@@ -198,31 +198,30 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
     //Build Crystal Matrix
 
     //Cell dimensions
-    const G4double cellX = 1.2*cm;
-    const G4double cellY = 1.2*cm;
+    const G4double frontCellXY = 1.0*cm;
+    const G4double rearCellXY = 1.4*cm;
     const G4double frontZ = 5.0*cm;
-    const G4double rearZ  = 15.0*cm;
+    const G4double rearZ  = 16.0*cm;
     
     const int nX = 3, nY = 3;
 
     // Envelope of the calorimeter
-    const G4double caloX = nX * cellX;   // 3.6 cm
-    const G4double caloY = nY * cellY;   // 3.6 cm
-    const G4double caloZ = frontZ + rearZ; // 20 cm
+    const G4double caloXY = nX * rearCellXY;   // 4.2 cm
+    const G4double caloZ = frontZ + rearZ; // 21 cm
     
-    auto* calorimeterSolid  = new G4Box("Calorimeter", caloX/2, caloY/2, caloZ/2);
+    auto* calorimeterSolid  = new G4Box("Calorimeter", caloXY/2, caloXY/2, caloZ/2);
     auto* calorimeterLogical = new G4LogicalVolume(calorimeterSolid, Vacuum, "Calorimeter");
     new G4PVPlacement(nullptr, G4ThreeVector(0,0, fCalorimeterPosition),
         calorimeterLogical, "CalorimeterPhys", worldLogic, false, 0, checkOverlaps);
 
     //front and rear
-    auto* frontSolid  = new G4Box("frontSolid", caloX/2, caloY/2, frontZ/2);
+    auto* frontSolid  = new G4Box("frontSolid", 3.0*frontCellXY/2, 3.0*frontCellXY/2, frontZ/2);
     auto* frontLV = new G4LogicalVolume(frontSolid, Vacuum, "FrontLV");
     new G4PVPlacement(nullptr,
                       G4ThreeVector(0,0, -caloZ/2 + frontZ/2),
                       frontLV, "FrontPV", calorimeterLogical, false, 0, checkOverlaps);
     
-    auto* rearSolid  = new G4Box("rearSolid", caloX/2, caloY/2, rearZ/2);
+    auto* rearSolid  = new G4Box("rearSolid", 3.0*rearCellXY/2, 3.0*rearCellXY/2, rearZ/2);
     auto* rearLV = new G4LogicalVolume(rearSolid, Vacuum, "rearLV");
     new G4PVPlacement(nullptr,
                   G4ThreeVector(0,0, +caloZ/2 - rearZ/2),
@@ -230,23 +229,23 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
 
     // --- front matrix 3x3 ---
     // 1) Slice in X dentro FrontLV
-    auto* frontXsliceS  = new G4Box("FrontXsliceS", cellX/2, caloY/2, frontZ/2);
+    auto* frontXsliceS  = new G4Box("FrontXsliceS", frontCellXY/2, 3.0*frontCellXY/2, frontZ/2);
     auto* frontXsliceLV = new G4LogicalVolume(frontXsliceS, BSO, "FrontXsliceLV");
-    new G4PVReplica("FrontXslicePV", frontXsliceLV, frontLV, kXAxis, nX, cellX);
+    new G4PVReplica("FrontXslicePV", frontXsliceLV, frontLV, kXAxis, nX, frontCellXY);
 
     // 2) Repliche in Y dentro ogni X-slice
-    auto* frontCellS  = new G4Box("FrontCellS", cellX/2, cellY/2, frontZ/2);
+    auto* frontCellS  = new G4Box("FrontCellS", frontCellXY/2, frontCellXY/2, frontZ/2);
     auto* frontCellLV = new G4LogicalVolume(frontCellS, BSO, "FrontCellLV");
-    new G4PVReplica("FrontCellPV", frontCellLV, frontXsliceLV, kYAxis, nY, cellY);
+    new G4PVReplica("FrontCellPV", frontCellLV, frontXsliceLV, kYAxis, nY, frontCellXY);
 
     // --- rear matrix 3x3 ---
-    auto* rearXsliceS  = new G4Box("rearXsliceS", cellX/2, caloY/2, rearZ/2);
+    auto* rearXsliceS  = new G4Box("rearXsliceS", rearCellXY/2, 3.0*rearCellXY/2, rearZ/2);
     auto* rearXsliceLV = new G4LogicalVolume(rearXsliceS, BSO, "rearXsliceLV");
-    new G4PVReplica("rearXslicePV", rearXsliceLV, rearLV, kXAxis, nX, cellX);
+    new G4PVReplica("rearXslicePV", rearXsliceLV, rearLV, kXAxis, nX, rearCellXY);
 
-    auto* rearCellS  = new G4Box("rearCellS", cellX/2, cellY/2, rearZ/2);
+    auto* rearCellS  = new G4Box("rearCellS", rearCellXY/2, rearCellXY/2, rearZ/2);
     auto* rearCellLV = new G4LogicalVolume(rearCellS, BSO, "rearCellLV");
-    new G4PVReplica("rearCellPV", rearCellLV, rearXsliceLV, kYAxis, nY, cellY);
+    new G4PVReplica("rearCellPV", rearCellLV, rearXsliceLV, kYAxis, nY, rearCellXY);
 
     // Virtual Detectors
     G4Box* virtualDetectorSolid = new G4Box("VirtualDetector", 10*cm, 10*cm, 0.25*mm);

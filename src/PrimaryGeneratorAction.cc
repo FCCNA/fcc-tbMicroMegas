@@ -36,4 +36,11 @@ PrimaryGeneratorAction::~PrimaryGeneratorAction() {
 
 void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent) {
     fGPS->GeneratePrimaryVertex(anEvent);
+    /*
+    auto particle = anEvent->GetPrimaryVertex(0)
+                    ->GetPrimary(0)
+                    ->GetParticleDefinition();
+
+    G4cout << particle->GetParticleName() << G4endl;
+    */
 }

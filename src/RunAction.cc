@@ -3,9 +3,12 @@
 //
 
 #include "RunAction.hh"
+#include "RunActionMessenger.hh"
 #include <G4AnalysisManager.hh>
 
 RunAction::RunAction() {
+
+    fMessenger = new RunActionMessenger(this);
     auto* analysisManager = G4AnalysisManager::Instance();
     analysisManager->SetVerboseLevel(0);
     analysisManager->SetNtupleMerging(true);
@@ -66,11 +69,15 @@ RunAction::RunAction() {
 
 void RunAction::BeginOfRunAction(const G4Run*) {
     auto* analysisManager = G4AnalysisManager::Instance();
-    analysisManager->OpenFile("output.root"); //temporary
+    analysisManager->OpenFile(fFileName + ".root");
 }
 
 void RunAction::EndOfRunAction(const G4Run*) {
     auto* analysisManager = G4AnalysisManager::Instance();
     analysisManager->Write();
     analysisManager->CloseFile();
+}
+
+void RunAction::SetFileName(const G4String & filename) {
+    if (filename != "") fFileName = filename;
 }

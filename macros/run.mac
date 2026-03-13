@@ -1,0 +1,24 @@
+/control/macroPath macros
+/run/initialize
+/control/execute beam_base.mac
+/random/setSeeds 13049039 61775110
+
+/control/execute beam_PST10_1GeV.mac
+/run/setfilenamesave PST10_1GeV_tbMM_10000evt
+/run/beamOn 10000
+
+/control/execute beam_PST10_2GeV.mac
+/run/setfilenamesave PST10_2GeV_tbMM_10000evt
+/run/beamOn 10000
+
+/control/execute beam_PST10_3GeV.mac
+/run/setfilenamesave PST10_3GeV_tbMM_10000evt
+/run/beamOn 10000
+
+/control/execute beam_PST10_4GeV.mac
+/run/setfilenamesave PST10_4GeV_tbMM_10000evt
+/run/beamOn 10000
+
+/control/execute beam_PST10_5GeV.mac
+/run/setfilenamesave PST10_5GeV_tbMM_10000evt
+/run/beamOn 10000

@@ -1,0 +1,121 @@
+# ======================================
+# Creates 5 GPS sources used for beam mixing
+# Do not use this macro alone
+# ======================================
+
+/gps/source/clear
+/gps/source/flatsampling false
+/gps/source/multiplevertex false
+
+# -------------------------------------------------
+# Source 0
+# -------------------------------------------------
+
+/gps/source/add 1.0
+/gps/particle pi+
+
+/gps/pos/type Point
+/gps/pos/centre 0 0 -50 cm
+/gps/direction 0 0 1
+/gps/pos/sigma_x 3.0 cm
+/gps/pos/sigma_y 1.5 cm
+
+/gps/ang/type beam2d
+/gps/ang/sigma_x 0.0 mrad
+/gps/ang/sigma_y 0.0 mrad
+
+/gps/ene/type Gauss
+/gps/ene/mono 1 GeV
+/gps/ene/sigma 0.007 GeV
+
+
+# -------------------------------------------------
+# Source 1
+# -------------------------------------------------
+
+/gps/source/add 1.0
+/gps/particle pi+
+
+/gps/pos/type Point
+/gps/pos/shape Circle
+/gps/pos/centre 0 0 -50 cm
+/gps/direction 0 0 1
+/gps/pos/sigma_x 3.0 cm
+/gps/pos/sigma_y 1.5 cm
+
+/gps/ang/type beam2d
+/gps/ang/sigma_x 0.0 mrad
+/gps/ang/sigma_y 0.0 mrad
+
+/gps/ene/type Gauss
+/gps/ene/mono 1 GeV
+/gps/ene/sigma 0.007 GeV
+
+
+# -------------------------------------------------
+# Source 2
+# -------------------------------------------------
+
+/gps/source/add 1.0
+/gps/particle pi+
+
+/gps/pos/type Point
+/gps/pos/shape Circle
+/gps/pos/centre 0 0 -50 cm
+/gps/direction 0 0 1
+/gps/pos/sigma_x 3.0 cm
+/gps/pos/sigma_y 1.5 cm
+
+/gps/ang/type beam2d
+/gps/ang/sigma_x 0.0 mrad
+/gps/ang/sigma_y 0.0 mrad
+
+/gps/ene/type Gauss
+/gps/ene/mono 1 GeV
+/gps/ene/sigma 0.007 GeV
+
+
+# -------------------------------------------------
+# Source 3
+# -------------------------------------------------
+
+/gps/source/add 1.0
+/gps/particle pi+
+
+/gps/pos/type Point
+/gps/pos/shape Circle
+/gps/pos/centre 0 0 -50 cm
+/gps/direction 0 0 1
+/gps/pos/sigma_x 3.0 cm
+/gps/pos/sigma_y 1.5 cm
+
+/gps/ang/type beam2d
+/gps/ang/sigma_x 0.0 mrad
+/gps/ang/sigma_y 0.0 mrad
+
+/gps/ene/type Gauss
+/gps/ene/mono 1 GeV
+/gps/ene/sigma 0.007 GeV
+
+
+# -------------------------------------------------
+# Source 4
+# -------------------------------------------------
+
+/gps/source/add 1.0
+/gps/particle pi+
+
+/gps/pos/type Point
+/gps/pos/shape Circle
+/gps/pos/centre 0 0 -50 cm
+/gps/direction 0 0 1
+/gps/pos/sigma_x 3.0 cm
+/gps/pos/sigma_y 1.5 cm
+
+/gps/ang/type beam2d
+/gps/ang/sigma_x 0.0 mrad
+/gps/ang/sigma_y 0.0 mrad
+
+/gps/ene/type Gauss
+/gps/ene/mono 1 GeV
+/gps/ene/sigma 0.007 GeV
