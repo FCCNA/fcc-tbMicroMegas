@@ -22,9 +22,11 @@ public:
     G4VPhysicalVolume* Construct() override;
     void ConstructSDandField() override;
 
+    void SetIsMicroMegas1(G4bool newValue) {fIsMM1 = newValue;};
     void SetMicroMegas1Position(G4double newValue) {fMM1Position = newValue;};
     void SetPlastic1Position(G4double newValue) {fPlastic1Position = newValue;};
     void SetVDet1Position(G4double newValue) {fVDet1Position = newValue;};
+    void SetIsMicroMegas2(G4bool newValue) {fIsMM2 = newValue;};
     void SetMicroMegas2Position(G4double newValue) {fMM2Position = newValue;};
     void SetPlastic2Position(G4double newValue) {fPlastic2Position = newValue;};
     void SetVDet2Position(G4double newValue) {fVDet2Position = newValue;};
@@ -43,9 +45,11 @@ private:
     G4LogicalVolume* virtualDetectorLogic2{nullptr};
     G4LogicalVolume* virtualDetectorLogic3{nullptr};
 
+    G4bool   fIsMM1{true};
     G4double fMM1Position = 0.0*cm;
     G4double fPlastic1Position = -1.5*cm;
     G4double fVDet1Position = -0.6*cm;
+    G4bool   fIsMM2{true};
     G4double fMM2Position = 30.0*cm;
     G4double fPlastic2Position = 28.5*cm;
     G4double fVDet2Position = 29.4*cm;

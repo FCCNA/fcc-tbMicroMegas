@@ -1,9 +1,13 @@
 /control/macroPath macros
+
+/testbeam/setMicroMegas1 true
+/testbeam/setMicroMegas2 true
+
 /run/initialize
 /random/setSeeds 347614 458825
-/run/setfilenamesave example
+/run/setfilenamesave e_5GeV_MM_10000evt_seed347614
 /control/execute beam_default.mac
 
-/gps/ene/mono 1 GeV
+/gps/ene/mono 5 GeV
 
-/run/beamOn 1000
+/run/beamOn 10000

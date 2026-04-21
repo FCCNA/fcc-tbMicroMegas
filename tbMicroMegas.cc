@@ -131,7 +131,7 @@ int main(int argc,char** argv)
   //
   if ( macro.size() ) {
     // batch mode
-    G4cout <<"Running vis macro... " <<G4endl;
+    G4cout <<"Running batch mode... " <<G4endl;
     G4String command = "/control/execute ";
     UImanager->ApplyCommand(command+macro);
   }

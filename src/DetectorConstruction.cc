@@ -165,8 +165,9 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
     buildMicromegasLayers(micromegasLogic1, "MM1");
     buildMicromegasLayers(micromegasLogic2, "MM2");
 
-    auto micromegasPhysical1 = new G4PVPlacement(station1Rotation, G4ThreeVector(0., 0., fMM1Position), micromegasLogic1, "MicroMegas1Phys", worldLogic, false, 0, checkOverlaps);
-    auto micromegasPhysical2 = new G4PVPlacement(station2Rotation, G4ThreeVector(0., 0., fMM2Position), micromegasLogic2, "MicroMegas2Phys", worldLogic, false, 1, checkOverlaps);
+    G4cout << fIsMM1 << " " << fIsMM2 << std::endl;
+    if (fIsMM1) auto micromegasPhysical1 = new G4PVPlacement(station1Rotation, G4ThreeVector(0., 0., fMM1Position), micromegasLogic1, "MicroMegas1Phys", worldLogic, false, 0, checkOverlaps);
+    if (fIsMM2) auto micromegasPhysical2 = new G4PVPlacement(station2Rotation, G4ThreeVector(0., 0., fMM2Position), micromegasLogic2, "MicroMegas2Phys", worldLogic, false, 1, checkOverlaps);
 
     //Build Plastic Scintillators
 
@@ -180,8 +181,8 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
     plasticLogic1->SetVisAttributes(plasticVis);
     plasticLogic2->SetVisAttributes(plasticVis);
 
-    auto plasticPhysical1 = new G4PVPlacement(station1Rotation, G4ThreeVector(0., 0., fPlastic1Position), plasticLogic1, "Plastic1Phys", worldLogic, false, 0, checkOverlaps);
-    auto plasticPhysical2 = new G4PVPlacement(station2Rotation, G4ThreeVector(0., 0., fPlastic2Position), plasticLogic2, "Plastic2Phys", worldLogic, false, 1, checkOverlaps);
+    if (fIsMM1) auto plasticPhysical1 = new G4PVPlacement(station1Rotation, G4ThreeVector(0., 0., fPlastic1Position), plasticLogic1, "Plastic1Phys", worldLogic, false, 0, checkOverlaps);
+    if (fIsMM2) auto plasticPhysical2 = new G4PVPlacement(station2Rotation, G4ThreeVector(0., 0., fPlastic2Position), plasticLogic2, "Plastic2Phys", worldLogic, false, 1, checkOverlaps);
 
     //build box
 

@@ -23,6 +23,10 @@ DetectorConstructionMessenger::DetectorConstructionMessenger(DetectorConstructio
 
     //position of station 1
     //micromegas 1
+    fIsMicroMegas1Cmd = new G4UIcmdWithABool("/testbeam/setMicroMegas1", this);
+    fIsMicroMegas1Cmd->SetParameterName("is MM1", true);
+    fIsMicroMegas1Cmd->SetDefaultValue(true);
+    fIsMicroMegas1Cmd->AvailableForStates(G4State_PreInit,G4State_Idle);
     fMicroMegas1PositionCmd = new G4UIcmdWithADoubleAndUnit("/testbeam/setMicroMegas1Position", this);
     fMicroMegas1PositionCmd->SetGuidance("Set the position of the micro-megas 1");
     fMicroMegas1PositionCmd->SetParameterName("z position of MM1", true);
@@ -45,6 +49,10 @@ DetectorConstructionMessenger::DetectorConstructionMessenger(DetectorConstructio
     fVDet1PositionCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
     //position of station 2
     //micromegas 2
+    fIsMicroMegas2Cmd = new G4UIcmdWithABool("/testbeam/setMicroMegas2", this);
+    fIsMicroMegas2Cmd->SetParameterName("is MM2", true);
+    fIsMicroMegas2Cmd->SetDefaultValue(true);
+    fIsMicroMegas2Cmd->AvailableForStates(G4State_PreInit,G4State_Idle);
     fMicroMegas2PositionCmd = new G4UIcmdWithADoubleAndUnit("/testbeam/setMicroMegas2Position", this);
     fMicroMegas2PositionCmd->SetGuidance("Set the position of the micro-megas 2");
     fMicroMegas2PositionCmd->SetParameterName("z position of MM2", true);
@@ -114,10 +122,12 @@ DetectorConstructionMessenger::DetectorConstructionMessenger(DetectorConstructio
 DetectorConstructionMessenger::~DetectorConstructionMessenger() {
     delete fCmdDir;
 
+    delete fIsMicroMegas1Cmd;
     delete fMicroMegas1PositionCmd;
     delete fPlastic1PositionCmd;
     delete fVDet1PositionCmd;
 
+    delete fIsMicroMegas2Cmd;
     delete fMicroMegas2PositionCmd;
     delete fPlastic2PositionCmd;
     delete fVDet2PositionCmd;
@@ -133,6 +143,9 @@ DetectorConstructionMessenger::~DetectorConstructionMessenger() {
 }
 
 void DetectorConstructionMessenger::SetNewValue(G4UIcommand *command, G4String newValue) {
+    if (command == fIsMicroMegas1Cmd) {
+        fDetector->SetIsMicroMegas1(fIsMicroMegas1Cmd->GetNewBoolValue(newValue));
+    }
     if (command == fMicroMegas1PositionCmd) {
         fDetector->SetMicroMegas1Position(fMicroMegas1PositionCmd->GetNewDoubleValue(newValue));
     }
@@ -141,6 +154,9 @@ void DetectorConstructionMessenger::SetNewValue(G4UIcommand *command, G4String n
     }
     if (command == fVDet1PositionCmd) {
         fDetector->SetVDet1Position(fVDet1PositionCmd->GetNewDoubleValue(newValue));
+    }
+    if (command == fIsMicroMegas2Cmd) {
+        fDetector->SetIsMicroMegas2(fIsMicroMegas2Cmd->GetNewBoolValue(newValue));
     }
     if (command == fMicroMegas2PositionCmd) {
         fDetector->SetMicroMegas2Position(fMicroMegas2PositionCmd->GetNewDoubleValue(newValue));

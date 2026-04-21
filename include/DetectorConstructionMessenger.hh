@@ -38,10 +38,12 @@ private:
     //G4UIcmdWithADouble* fCrystalAngleYCmd{nullptr};
 
     //Position of 'station' 1
+    G4UIcmdWithABool* fIsMicroMegas1Cmd{nullptr};
     G4UIcmdWithADoubleAndUnit* fMicroMegas1PositionCmd{nullptr};
     G4UIcmdWithADoubleAndUnit* fPlastic1PositionCmd{nullptr};
     G4UIcmdWithADoubleAndUnit* fVDet1PositionCmd{nullptr};
     //Position of 'station' 2
+    G4UIcmdWithABool* fIsMicroMegas2Cmd{nullptr};
     G4UIcmdWithADoubleAndUnit* fMicroMegas2PositionCmd{nullptr};
     G4UIcmdWithADoubleAndUnit* fPlastic2PositionCmd{nullptr};
     G4UIcmdWithADoubleAndUnit* fVDet2PositionCmd{nullptr};
