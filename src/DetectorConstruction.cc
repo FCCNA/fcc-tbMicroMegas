@@ -196,7 +196,38 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
 
     auto* boxPhysical = new G4PVPlacement(nullptr, G4ThreeVector(0., 0., fBoxPosition), boxLogic, "BoxPhys", worldLogic, false, 0, checkOverlaps);
 
-    //Build Crystal Matrix
+    //Build Crystal Matrix, realistic geometry of 2026 test beam
+    //2026 test beam had a front 3x3 matrix made of BSO crystal with dimension 1.0x1.0x5.0 cm^3
+    //the rear matrix was made of BSO and PWO crystals of different dimensions
+    //the spacing between crystals is 1 mm (?), we will not simulate the 3D printed honeycomb, as it is too difficult and not very influencial on the shower development
+
+
+    //first, we build a mother volume for the calorimeter, so we can rotate it and move it as a whole
+    //PCB and SiPMs will also belong to this volume
+    
+    // Envelope of the calorimeter
+    const G4double envelopeCaloXY = 6.0*cm; //the matrix should be around 4.2 cm
+    const G4double envelopeCaloZ = 25.0*cm; //the matrix should be around 21 cm
+    
+    auto* envelopeCaloSolid  = new G4Box("EnvelopeCalo", envelopeCaloXY/2, envelopeCaloXY/2, envelopeCaloZ/2);
+    auto* envelopeCaloLogical = new G4LogicalVolume(envelopeCaloSolid, Vacuum, "EnvelopeCalo");
+    new G4PVPlacement(nullptr, G4ThreeVector(0,0, fEnvelopeCaloPosition), envelopeCaloLogical, "EnvelopeCaloPhys", worldLogic, false, 0, checkOverlaps); //DEBUG ME!, fEnvelopeCaloPosition
+
+    //the following function allows to build a calorimeter 'layer' made of the 3x3 crystals. We provide a vector of Logical Volumes because the rear is made of many different crystals
+    //so make sure the are defined in the right oreder in the vector
+    //the volumes for the wrapping are defined inside this function
+
+    auto buildCaloLayer = [&](std::vector<G4LogicalVolume*>& layerLogicalVolumes, G4ThreeVector layerPosition, G4double pass, G4double spacing){
+        //calculate the position of the 00 crystla (top, left)
+        auto pos00 = layerPosition + G4ThreeVector(pass + spacing, pass + spacing, 0.);
+        for (int i = 0; i < 3; i++){
+            for (int j = 0; j < 3; j++){
+                //calculate copy number and implement it
+                new G4PVPlacement(nullptr, pos00 - G4ThreeVector(i * (pass + spacing), j * (pass + spacing), 0.), logVolume, logVolume->GetName() + "Phys", envelopeCaloLogical, false, 0, checkOverlaps);
+            }
+        }
+    }
+
 
     //Cell dimensions
     const G4double frontCellXY = 1.0*cm;
@@ -205,15 +236,6 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
     const G4double rearZ  = 16.0*cm;
     
     const int nX = 3, nY = 3;
-
-    // Envelope of the calorimeter
-    const G4double caloXY = nX * rearCellXY;   // 4.2 cm
-    const G4double caloZ = frontZ + rearZ; // 21 cm
-    
-    auto* calorimeterSolid  = new G4Box("Calorimeter", caloXY/2, caloXY/2, caloZ/2);
-    auto* calorimeterLogical = new G4LogicalVolume(calorimeterSolid, Vacuum, "Calorimeter");
-    new G4PVPlacement(nullptr, G4ThreeVector(0,0, fCalorimeterPosition),
-        calorimeterLogical, "CalorimeterPhys", worldLogic, false, 0, checkOverlaps);
 
     //front and rear
     auto* frontSolid  = new G4Box("frontSolid", 3.0*frontCellXY/2, 3.0*frontCellXY/2, frontZ/2);
