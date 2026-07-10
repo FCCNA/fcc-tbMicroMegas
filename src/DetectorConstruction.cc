@@ -2,6 +2,7 @@
 // Created by dboccanfuso on 3/4/26.
 //
 
+#include <cmath>
 #include "DetectorConstruction.hh"
 #include "G4PhysicalVolumeStore.hh"
 
@@ -165,7 +166,6 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
     buildMicromegasLayers(micromegasLogic1, "MM1");
     buildMicromegasLayers(micromegasLogic2, "MM2");
 
-    G4cout << fIsMM1 << " " << fIsMM2 << std::endl;
     if (fIsMM1) auto micromegasPhysical1 = new G4PVPlacement(station1Rotation, G4ThreeVector(0., 0., fMM1Position), micromegasLogic1, "MicroMegas1Phys", worldLogic, false, 0, checkOverlaps);
     if (fIsMM2) auto micromegasPhysical2 = new G4PVPlacement(station2Rotation, G4ThreeVector(0., 0., fMM2Position), micromegasLogic2, "MicroMegas2Phys", worldLogic, false, 1, checkOverlaps);
 
@@ -239,14 +239,38 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
     auto* frontCellLV = new G4LogicalVolume(frontCellS, BSO, "FrontCellLV");
     new G4PVReplica("FrontCellPV", frontCellLV, frontXsliceLV, kYAxis, nY, frontCellXY);
 
-    // --- rear matrix 3x3 ---
-    auto* rearXsliceS  = new G4Box("rearXsliceS", rearCellXY/2, 3.0*rearCellXY/2, rearZ/2);
-    auto* rearXsliceLV = new G4LogicalVolume(rearXsliceS, BSO, "rearXsliceLV");
-    new G4PVReplica("rearXslicePV", rearXsliceLV, rearLV, kXAxis, nX, rearCellXY);
+    // --- rear matrix: full 3x3 or swiss cross ---
+    const G4bool buildRearCorners = false;  // true = 3x3, false = swiss cross
 
     auto* rearCellS  = new G4Box("rearCellS", rearCellXY/2, rearCellXY/2, rearZ/2);
     auto* rearCellLV = new G4LogicalVolume(rearCellS, BSO, "rearCellLV");
-    new G4PVReplica("rearCellPV", rearCellLV, rearXsliceLV, kYAxis, nY, rearCellXY);
+
+    int copyNo = 0;
+
+    for (int ix = -1; ix <= 1; ix++) {
+        for (int iy = -1; iy <= 1; iy++) {
+
+            const bool isCorner = (std::abs(ix) == 1 && std::abs(iy) == 1);
+
+            if (isCorner && !buildRearCorners) {
+                copyNo++;
+                continue;
+            }
+
+            new G4PVPlacement(
+                nullptr,
+                G4ThreeVector(ix * rearCellXY, iy * rearCellXY, 0.),
+                rearCellLV,
+                "rearCellPV",
+                rearLV,
+                false,
+                copyNo,
+                checkOverlaps
+            );
+
+            copyNo++;
+        }
+    }
 
     // Virtual Detectors
     G4Box* virtualDetectorSolid = new G4Box("VirtualDetector", 10*cm, 10*cm, 0.25*mm);

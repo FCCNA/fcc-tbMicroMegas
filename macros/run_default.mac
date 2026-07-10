@@ -5,9 +5,9 @@
 
 /run/initialize
 /random/setSeeds 347614 458825
-/run/setfilenamesave e_5GeV_MM_10000evt_seed347614
+/run/setfilenamesave debug
 /control/execute beam_default.mac
 
 /gps/ene/mono 5 GeV
 
-/run/beamOn 10000
+/run/beamOn 100

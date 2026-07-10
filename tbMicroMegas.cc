@@ -17,6 +17,8 @@
 #include "Randomize.hh"
 
 #include "G4PhysListFactory.hh"
+#include "G4OpticalPhysics.hh"
+#include "G4OpticalParameters.hh"
 
 #include <cstdlib>
 #include <fstream>
@@ -87,6 +89,7 @@ int main(int argc,char** argv)
 #ifdef G4MULTITHREADED
   if ( nThreads > 0 ) {
     runManager->SetNumberOfThreads(nThreads);
+    G4cout << ">>> Requested number of threads: " << nThreads << G4endl;
   }
 #endif
 
@@ -100,7 +103,18 @@ int main(int argc,char** argv)
   //G4PhysListFactory factory;
   //G4VModularPhysicsList* physicsList = factory.GetReferencePhysList("FTFP_BERT_EMV");
   auto physicsList = new FTFP_BERT(0);
-
+  G4OpticalPhysics* opticalPhysics = new G4OpticalPhysics(1, "OpticalPhysics");
+  physicsList->RegisterPhysics(opticalPhysics);
+  //opticalPhyiscs is registered but all optical processes are deactivated, set activartion via macro commands
+  auto* opticalParams = G4OpticalParameters::Instance();
+  opticalParams->SetProcessActivation("Cerenkov", false);
+  opticalParams->SetProcessActivation("Scintillation", false);
+  opticalParams->SetProcessActivation("OpAbsorption", false);
+  opticalParams->SetProcessActivation("OpRayleigh", false);
+  opticalParams->SetProcessActivation("OpMieHG", false);
+  opticalParams->SetProcessActivation("OpBoundary", false);
+  opticalParams->SetProcessActivation("OpWLS", false);
+  opticalParams->SetProcessActivation("OpWLS2", false);
   runManager->SetUserInitialization(physicsList);
   
   auto actionInitialization = new ActionInitialization();
